@@ -1,4 +1,5 @@
 require 'time'
+require 'puppetdb_query/to_mongo'
 
 require_relative "logging"
 
