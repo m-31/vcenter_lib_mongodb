@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'vcenter_lib'
   spec.add_dependency 'mongo'
-  spec.add_dependency 'vault'
+  spec.add_dependency 'puppetdb_query'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rspec'

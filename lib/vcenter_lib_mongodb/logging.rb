@@ -8,10 +8,7 @@ module VcenterLibMongodb
       attr_writer :logger
 
       def logger
-        unless @logger
-          @logger = VcenterLib::Logging.logger
-        end
-        @logger
+        @logger ||= VcenterLib::Logging.logger
       end
     end
 

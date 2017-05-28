@@ -30,23 +30,29 @@ module VcenterLibMongodb
       collection.find.batch_size(999).projection(_id: 1).map { |k| k[:_id] }
     end
 
-    # get vm names that fulfill given mongodb query
+    # get vm names that fulfill given query
     #
-    # @param query mongodb query
+    # @param query [String] a query for VMs.
+    #    nil or white space only string will return all VMs
+    # @return [Array<String>] names of nodes that fulfill the query
     def query_vms(query)
+      return all_nodes if query_string.nil? || query_string.strip.empty?
+      mongo_query = convert.query(query)
       collection = connection[vms_collection]
-      collection.find(query).batch_size(999).projection(_id: 1).map { |k| k[:_id] }
+      collection.find(mongo_query).batch_size(999).projection(_id: 1).map { |k| k[:_id] }
     end
 
     # get vms and their facts that fulfill given mongodb query
     #
-    # @param query mongodb query
+    # @param query[String] a query for VMs
     # @param facts [Array<String>] get these facts in the result, eg ['boot_time'], empty for all
+    # @return [Hash<name, <fact , value>>] VM names with their facts and values
     def query_facts(query, facts = [])
+      mongo_query = convert.query(query)
       fields = Hash[facts.collect { |fact| [fact.to_sym, 1] }]
       collection = connection[vms_collection]
       result = {}
-      collection.find(query).batch_size(999).projection(fields).each do |values|
+      collection.find(mongo_query).batch_size(999).projection(fields).each do |values|
         id = values.delete('_id')
         result[id] = values
       end
@@ -68,7 +74,7 @@ module VcenterLibMongodb
       result
     end
 
-    # get vms and their facts for a pattern
+    # get VMs and their facts for a pattern
     #
     # @param query mongodb query
     # @param pattern [RegExp] search for
@@ -76,9 +82,10 @@ module VcenterLibMongodb
     # @param facts_found [Array<String>] fact names are added to this array
     # @param check_names [Boolean] also search fact names
     def search_facts(query, pattern, facts = [], facts_found = [], check_names = false)
+      mongo_query = convert.query(query)
       collection = connection[vms_collection]
       result = {}
-      collection.find(query).batch_size(999).each do |values|
+      collection.find(mongo_query).batch_size(999).each do |values|
         id = values.delete('_id')
         found = {}
         values.each do |k, v|
