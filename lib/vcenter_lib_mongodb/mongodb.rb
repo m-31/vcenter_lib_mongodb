@@ -34,9 +34,9 @@ module VcenterLibMongodb
     #
     # @param query [String] a query for VMs.
     #    nil or white space only string will return all VMs
-    # @return [Array<String>] names of nodes that fulfill the query
+    # @return [Array<String>] names of VMs that fulfill the query
     def query_vms(query)
-      return all_nodes if query.nil? || query.strip.empty?
+      return all_vms if query.nil? || query.strip.empty?
       mongo_query = convert.query(query)
       collection = connection[vms_collection]
       collection.find(mongo_query).batch_size(999).projection(_id: 1).map { |k| k[:_id] }
