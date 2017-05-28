@@ -9,6 +9,7 @@ module VcenterLibMongodb
     attr_reader :connection
     attr_reader :vms_collection
     attr_reader :meta_collection
+    attr_reader :convert
 
     # initialize access to mongodb
     #
@@ -22,6 +23,7 @@ module VcenterLibMongodb
       @connection = connection
       @vms_collection = vms
       @meta_collection = meta
+      @convert = ::PuppetDBQuery::ToMongo.new
     end
 
     # get all vm names
